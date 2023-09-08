@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ object.title }}</h1>
+
+    {% if object.cover %}
+        <img src="{{ object.cover.url }}" alt="{{ object.title }} cover">
+    {% else %}
+        <img src="{% static 'img/no-image.png' %}" alt="No cover">
+    {% endif %}
+
+    <h2>Apžvalgos:</h2>
+    {% if object.gamereview_set.all %}
+    <ul>
+    {% for review in object.gamereview_set.all %}
+        <li>
+            <strong>{{ review.reviewer.username }}</strong> ({{ review.date_created|date:"Y-m-d" }}) - {{ review.rating }}/100<br>
+            {{ review.content }}
+        </li>
+    {% endfor %}
+    </ul>
+    {% else %}
+    <p>Šiam žaidimui apžvalgų nėra.</p>
+    {% endif %}
+
+    
+    {% if user.is_authenticated %}
+    <h3>Palikti apžvalgą:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Pateikti</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+
